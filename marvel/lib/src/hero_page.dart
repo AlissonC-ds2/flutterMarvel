@@ -159,7 +159,7 @@ class _HeroPage extends State<HeroPage> {
           _datawrapper = result2;
         });
       }  else {
-        final result = await repository.getHeroesByName(_filter.text);
+        final result = await repository.getHeroes(_filter.text);
         setState(() {
           _datawrapper = result;
         });

@@ -13,13 +13,15 @@ class RepositoryMarvel {
   String nameHero = '';
   String descriptionHero = '';
 
-  Future<Data> getHeroes() async {
+  Future<Data> getHeroes([String? param]) async {
     http.Response response;
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     String temp = "$timestamp$apikey$apiPublica";
     String hash = generateMd5(temp);
 
-    final uri = Uri.parse("https://gateway.marvel.com:443/v1/public/characters?ts=$timestamp&apikey=32f207ac4e73f73b296d0e9b4b8dc49b&hash=$hash");
+    final uri = param != null ? 
+    Uri.parse("https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=$param&ts=$timestamp&apikey=32f207ac4e73f73b296d0e9b4b8dc49b&hash=$hash") :
+    Uri.parse("https://gateway.marvel.com:443/v1/public/characters?ts=$timestamp&apikey=32f207ac4e73f73b296d0e9b4b8dc49b&hash=$hash");
 
     response = await http.get(uri);
       

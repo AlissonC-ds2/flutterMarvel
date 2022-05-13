@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -19,39 +20,19 @@ class _HeroPage extends State<HeroPage> {
   List<String> nomeDescricao = []; 
   Widget customSearchBar = const Text('Herois da Marvel');
   Icon customIcon = const Icon(Icons.search);
-  final TextEditingController _filter = new TextEditingController();
-  late Data _listHeroisFiltro;
-
-
-
-  _HeroPage() {
-      Future.delayed(const Duration(milliseconds: 3000), () {
-        _filter.addListener(() async {
-          if (_filter.text.isEmpty) {
-            final result2 = await repository.getHeroes();
-            setState(() {
-              _datawrapper = result2;
-            });
-          } 
-          else {
-            final result = await repository.getHeroesByName(_filter.text);
-            setState(() {
-              _datawrapper = result;
-            });
-          }
-    });
-
-
-      });
-
-
-  }
+  final TextEditingController _filter = TextEditingController();
+  Timer? _timerInputSearch;
 
 
   @override
   void initState() {
     super.initState();
     _init();
+    _registerListenerInputSearch();
+  }
+
+  void _registerListenerInputSearch() {
+    _filter.addListener(_changeInputSearch);
   }
 
   Future<void> _init() async {
@@ -165,4 +146,25 @@ class _HeroPage extends State<HeroPage> {
   }
   
   
+
+  void _changeInputSearch() async {
+    if (_timerInputSearch != null) {
+      _timerInputSearch!.cancel();
+    } 
+    _timerInputSearch = Timer(const Duration(milliseconds: 700), () async {
+      print('pesquisou');
+      if (_filter.text.isEmpty) {
+        final result2 = await repository.getHeroes();
+        setState(() {
+          _datawrapper = result2;
+        });
+      }  else {
+        final result = await repository.getHeroesByName(_filter.text);
+        setState(() {
+          _datawrapper = result;
+        });
+      }
+    });
+    
+  }
 }
